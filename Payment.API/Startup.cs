@@ -45,7 +45,11 @@ namespace Payment.API
             app.UseHttpsRedirection();
             app.UseDefaultFiles();
             app.UseStaticFiles();
-            app.UseMvc();
+            app.UseMvc(routes =>
+              routes.MapSpaFallbackRoute(
+                  name: "spa-fallback",
+                  defaults: new {controller = "FallBack", action = "Index"}
+              ));
         }
     }
 }
