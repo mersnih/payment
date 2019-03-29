@@ -223,7 +223,7 @@ var PaymentComponent = /** @class */ (function () {
         this.billingModel.hash_algorithm = "SHA256";
         this.billingModel.storename = 5544331199;
         this.billingModel.mode = "fullpay";
-        this.billingModel.chargetotal = 25.0;
+        this.billingModel.chargetotal = 25.50;
         this.billingModel.currency = 978;
     };
     PaymentComponent.prototype.onSubmit = function () {

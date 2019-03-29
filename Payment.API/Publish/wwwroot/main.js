@@ -180,7 +180,7 @@ module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<html>\n<head><title>IPG Connect Sample for ASP</title></head>\n<body>\n<h1>Order Form</h1>\n<form  (ngSubmit)=\"onSubmit()\">\n\n    <div class=\"form-group\">\n        <label for=\"chargetotalId\">Charge totale</label>\n        <input class=\"form-control\" name=\"chargetotal\" id=\"chargetotalId\" [(ngModel)]=\"billingModel.chargetotal\" />\n    </div>\n    <div class=\"form-group\" hidden>\n        <label for=\"currencyId\">Devise</label>\n        <input class=\"form-control\" name=\"currency\" id=\"currencyId\" [(ngModel)]=\"billingModel.currency\" />\n    </div>\n\n<input type=\"submit\" value=\"Valider\">\n</form>\n</body>\n</html>\n\n{{billingModel | json}}"
+module.exports = "<html>\n<head><title>IPG Connect Sample for ASP</title></head>\n<body>\n<h1>Order Form</h1>\n<form  (ngSubmit)=\"onSubmit()\">\n\n    <div class=\"form-group\">\n        <label for=\"chargetotalId\">Charge totale</label>\n        <input class=\"form-control\" name=\"chargetotal\" id=\"chargetotalId\" [(ngModel)]=\"billingModel.chargetotal\" />\n    </div>\n    <div class=\"form-group\" hidden>\n        <label for=\"currencyId\">Devise</label>\n        <input class=\"form-control\" name=\"currency\" id=\"currencyId\" [(ngModel)]=\"billingModel.currency\" />\n    </div>\n\n<input type=\"submit\" value=\"Valider\">\n</form>\n</body>\n</html>\n\n{{billingModel | json}}\n\n"
 
 /***/ }),
 
@@ -215,14 +215,15 @@ var PaymentComponent = /** @class */ (function () {
         this._baseUrl = baseUrl;
     }
     PaymentComponent.prototype.ngOnInit = function () {
+        this.billingModel = new _model_billing__WEBPACK_IMPORTED_MODULE_2__["Billing"]();
         this.billingModel.hash = "";
         this.billingModel.txntype = "sale";
         this.billingModel.txndatetime = "";
         this.billingModel.timezone = "GMT";
         this.billingModel.hash_algorithm = "SHA256";
-        this.billingModel.storename = 123456789;
+        this.billingModel.storename = 5544331199;
         this.billingModel.mode = "fullpay";
-        this.billingModel.chargetotal = 25.0;
+        this.billingModel.chargetotal = 25.50;
         this.billingModel.currency = 978;
     };
     PaymentComponent.prototype.onSubmit = function () {
