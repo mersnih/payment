@@ -154,6 +154,8 @@ var Billing = /** @class */ (function () {
         this.mode = "";
         this.chargetotal = 25.0;
         this.currency = 978;
+        this.responseFailURL = "";
+        this.responseSuccessURL = "";
     }
     return Billing;
 }());
@@ -200,6 +202,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _services_payment_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../services/payment.service */ "./src/app/services/payment.service.ts");
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/common/http */ "./node_modules/@angular/common/fesm5/http.js");
 /* harmony import */ var _services_date_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../services/date.service */ "./src/app/services/date.service.ts");
+/* harmony import */ var _services_hash_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../services/hash.service */ "./src/app/services/hash.service.ts");
+
 
 
 
@@ -207,8 +211,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var PaymentComponent = /** @class */ (function () {
-    function PaymentComponent(_paymentService, http, baseUrl, _dateFormatPipe) {
+    function PaymentComponent(_paymentService, _hashService, http, baseUrl, _dateFormatPipe) {
         this._paymentService = _paymentService;
+        this._hashService = _hashService;
         this._dateFormatPipe = _dateFormatPipe;
         this.billingModel = new _model_billing__WEBPACK_IMPORTED_MODULE_2__["Billing"]();
         this._http = http;
@@ -219,23 +224,19 @@ var PaymentComponent = /** @class */ (function () {
         this.billingModel.hash = "";
         this.billingModel.txntype = "sale";
         this.billingModel.txndatetime = "";
-        this.billingModel.timezone = "GMT";
+        this.billingModel.timezone = "Europe/London";
         this.billingModel.hash_algorithm = "SHA256";
         this.billingModel.storename = 5544331199;
         this.billingModel.mode = "fullpay";
         this.billingModel.chargetotal = 25.50;
         this.billingModel.currency = 978;
+        this.billingModel.responseSuccessURL = this._baseUrl + "api/Response";
+        this.billingModel.responseFailURL = this._baseUrl + "api/Response";
     };
     PaymentComponent.prototype.onSubmit = function () {
         var _this = this;
         this.billingModel.txndatetime = this._dateFormatPipe.transform(new Date());
-        var params = new _angular_common_http__WEBPACK_IMPORTED_MODULE_4__["HttpParams"]()
-            .append("txndatetime", this.billingModel.txndatetime)
-            .append("storename", this.billingModel.storename.toString())
-            .append("chargetotal", this.billingModel.chargetotal.toString())
-            .append("currency", this.billingModel.currency.toString());
-        var headers = new _angular_common_http__WEBPACK_IMPORTED_MODULE_4__["HttpHeaders"]({ 'Content-Type': 'application/json; charset=utf-8' });
-        this._http.post(this._baseUrl + "api/payment", null, { headers: headers, params: params }).subscribe(function (data) {
+        this._hashService.encrypt(this.billingModel, this._baseUrl).subscribe(function (data) {
             _this.billingModel.hash = data;
             console.log(data);
         });
@@ -250,8 +251,9 @@ var PaymentComponent = /** @class */ (function () {
             template: __webpack_require__(/*! ./payment.component.html */ "./src/app/payment/payment.component.html"),
             styles: [__webpack_require__(/*! ./payment.component.css */ "./src/app/payment/payment.component.css")]
         }),
-        tslib__WEBPACK_IMPORTED_MODULE_0__["__param"](2, Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Inject"])('BASE_URL')),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__param"](3, Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Inject"])('BASE_URL')),
         tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_services_payment_service__WEBPACK_IMPORTED_MODULE_3__["PaymentService"],
+            _services_hash_service__WEBPACK_IMPORTED_MODULE_6__["HashService"],
             _angular_common_http__WEBPACK_IMPORTED_MODULE_4__["HttpClient"], String, _services_date_service__WEBPACK_IMPORTED_MODULE_5__["DateService"]])
     ], PaymentComponent);
     return PaymentComponent;
@@ -298,6 +300,48 @@ var DateService = /** @class */ (function (_super) {
 
 /***/ }),
 
+/***/ "./src/app/services/hash.service.ts":
+/*!******************************************!*\
+  !*** ./src/app/services/hash.service.ts ***!
+  \******************************************/
+/*! exports provided: HashService */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HashService", function() { return HashService; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common/http */ "./node_modules/@angular/common/fesm5/http.js");
+
+
+
+var HashService = /** @class */ (function () {
+    function HashService(_http) {
+        this._http = _http;
+    }
+    HashService.prototype.encrypt = function (billing, _baseUrl) {
+        var params = new _angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpParams"]()
+            .append("txndatetime", billing.txndatetime)
+            .append("storename", billing.storename.toString())
+            .append("chargetotal", billing.chargetotal.toString())
+            .append("currency", billing.currency.toString());
+        var headers = new _angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpHeaders"]({ 'Content-Type': 'application/json; charset=utf-8' });
+        return this._http.post(_baseUrl + "api/payment", null, { headers: headers, params: params });
+    };
+    HashService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({
+            providedIn: 'root'
+        }),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpClient"]])
+    ], HashService);
+    return HashService;
+}());
+
+
+
+/***/ }),
+
 /***/ "./src/app/services/payment.service.ts":
 /*!*********************************************!*\
   !*** ./src/app/services/payment.service.ts ***!
@@ -328,7 +372,9 @@ var PaymentService = /** @class */ (function () {
             .append("storename", billing.storename.toString())
             .append("mode", billing.mode)
             .append("chargetotal", billing.chargetotal.toString())
-            .append("currency", billing.currency.toString());
+            .append("currency", billing.currency.toString())
+            .append("responseSuccessURL", billing.responseSuccessURL)
+            .append("responseFailURL", billing.responseFailURL);
         var headers = new _angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpHeaders"]({ 'Content-Type': 'application/json; charset=utf-8' });
         var body = JSON.stringify(billing);
         return this._http.post(this._url, body, { headers: headers, params: params });
